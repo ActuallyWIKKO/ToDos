@@ -1,3 +1,5 @@
+/* General classes only */
+
 @tailwind base; 
 @tailwind components;
 @tailwind utilities;
