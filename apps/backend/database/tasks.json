@@ -1,8 +1,13 @@
 {
   "items": [
     {
-      "id": 1,
-      "task": "a new task is born. edited.",
+      "id": 3,
+      "task": "and another one",
+      "completed": false
+    },
+    {
+      "id": 4,
+      "task": "a new task is born.",
       "completed": false
     }
   ]

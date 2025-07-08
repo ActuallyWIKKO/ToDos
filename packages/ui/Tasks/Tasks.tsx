@@ -14,6 +14,7 @@ export const Tasks: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [confirmDeleteID, setConfirmDeleteID] = useState<number | null>(null);
 
   const fetchTask = async () => {
     setLoading(true);
@@ -21,10 +22,10 @@ export const Tasks: React.FC = () => {
     try {
       const response = await axios.get<Task[]>("http://localhost:1199/tasks/");
       setTasks(response.data);
-    } catch (err) {
+    } catch (error) {
       console.log("Fetching the data was not successful.");
       console.log("Here is why:");
-      console.error(err);
+      console.error(error);
       setError("Fetching the data was not successful.");
     } finally {
       setLoading(false);
@@ -34,13 +35,11 @@ export const Tasks: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`http://localhost:1199/task/${id}`);
-      setTasks((previousTask) =>
-        previousTask.filter((task) => task.id !== id)
-      );
-    } catch (err) {
+      setTasks((previousTask) => previousTask.filter((task) => task.id !== id));
+    } catch (error) {
       console.log("Failed to delete the task.");
       console.log("Here is why:");
-      console.error(err);
+      console.error(error);
     }
   };
 
@@ -81,13 +80,17 @@ export const Tasks: React.FC = () => {
             {tasks.length > 0 ? (
               tasks.map((item) => (
                 <div key={item.id}>
-                  <p className="task">
-                    {item.id}
-                    <br />
-                    {item.task}
-                  </p>
-
-                  {editingTask?.id === item.id ? (
+                  {confirmDeleteID === item.id ? (
+                    <>
+                      <p>Delete this task?</p>
+                      <button onClick={() => handleDelete(item.id)}>
+                        Yes
+                      </button>{" "}
+                      <button onClick={() => setConfirmDeleteID(null)}>
+                        No
+                      </button>
+                    </>
+                  ) : editingTask?.id === item.id ? (
                     <EditTask
                       task={editingTask}
                       onSave={handleEditing}
@@ -95,21 +98,17 @@ export const Tasks: React.FC = () => {
                     />
                   ) : (
                     <>
+                      <p className="task">
+                        {item.task}
+                      </p>
                       <button onClick={() => setEditingTask(item)}>
                         Edit Task
                       </button>
                       <div>
-                        <button onClick={() => handleDelete(item.id)}>
+                        <button onClick={() => setConfirmDeleteID(item.id)}>
                           Delete Task
                         </button>
                       </div>
-                      <p>
-                        Delete this task?{" "}
-                        <button onClick={() => handleDelete(item.id)}>
-                          Yes
-                        </button>{" "}
-                        <button onClick={() => {}}>No</button>
-                      </p>
                     </>
                   )}
                   <br />

@@ -24,7 +24,7 @@ const db = new Low<Task>(new JSONFile("./database/tasks.json"), { items: [] });
   // get tasks route
   app.get("/tasks", async (req: Request, res: Response) => {
     await db.read();
-    const outputDesc = db.data?.items.sort((a, b) => b.id - a.id)
+    const outputDesc = db.data?.items.sort((a, b) => b.id - a.id);
     res.json(outputDesc ?? []);
   });
   // get task id route
