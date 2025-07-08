@@ -37,13 +37,17 @@ export const Tasks: React.FC = () => {
       <div>
         {tasks.length > 0 ? (
           tasks.map((item) => (
-            <p key={item.id} className="task">
+           <> <p key={item.id} className="task">
               {item.id}
-              <br></br>
+              <br/>
               {item.task}
-               <EditTask/>
+            </p>
+            <p>
+              <EditTask/>
                <DeleteTask/>
             </p>
+             <br/>
+            </>
           ))
         ) : (
           <p>No tasks yet</p>
