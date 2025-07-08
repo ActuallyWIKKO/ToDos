@@ -9,10 +9,9 @@ type Task = {
 
 type NewTaskProps = {
   onNewTaskAdded: (task: Task) => void;
-}
+};
 
-
-export const NewTask: React.FC<NewTaskProps> = ({onNewTaskAdded}) => {
+export const NewTask: React.FC<NewTaskProps> = ({ onNewTaskAdded }) => {
   const [newTask, setNewTask] = useState<string>("");
 
   const createNewTask = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -40,7 +39,7 @@ export const NewTask: React.FC<NewTaskProps> = ({onNewTaskAdded}) => {
         <input
           type="text"
           name="newTask"
-          placeholder="Add a task..."
+          placeholder="Enter a task..."
           value={newTask}
           onChange={(event) => setNewTask(event.target.value)}
         />

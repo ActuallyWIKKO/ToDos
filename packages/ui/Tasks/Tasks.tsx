@@ -11,7 +11,13 @@ type Task = {
 
 export const Tasks: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+
   const fetchTask = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await axios.get<Task[]>("http://localhost:1199/tasks/");
       setTasks(response.data);
@@ -19,52 +25,102 @@ export const Tasks: React.FC = () => {
       console.log("Fetching the data was not successful.");
       console.log("Here is why:");
       console.error(err);
+      setError("Fetching the data was not successful.");
+    } finally {
+      setLoading(false);
     }
   };
 
-const handleDelete = async (id:number) => {
+  const handleDelete = async (id: number) => {
     try {
-     await axios.delete(`http://localhost:1199/task/${id}`)
-     setTasks((previousTask) => previousTask.filter((tasks) => tasks.id !== id));   
+      await axios.delete(`http://localhost:1199/task/${id}`);
+      setTasks((previousTask) =>
+        previousTask.filter((task) => task.id !== id)
+      );
     } catch (err) {
-        console.log("Failed to delete the task.");
-        console.log("Here is why:");
-        console.error(err);
+      console.log("Failed to delete the task.");
+      console.log("Here is why:");
+      console.error(err);
     }
-}
+  };
 
+  const handleEditing = async (updatedTask: Task) => {
+    try {
+      await axios.put(
+        `http://localhost:1199/task/${updatedTask.id}`,
+        updatedTask
+      );
+      setTasks((prev) =>
+        prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+      );
+      setEditingTask(null);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update task. :( Try again later.");
+    }
+  };
+
+  const handleTaskAdded = (newTask: Task) => {
+    setTasks((prevTasks) => [newTask, ...prevTasks]);
+  };
 
   useEffect(() => {
     fetchTask();
   }, []);
 
-  const handleTaskAdded = (newTask: Task) => {
-    setTasks((prevTasks) => [newTask, ...prevTasks]);
-  }
-
   return (
     <section className="bg-base-100">
-       <NewTask onNewTaskAdded={handleTaskAdded} />
-      <div>
-        {tasks.length > 0 ? (
-          tasks.map((item) => (
-           <> <p key={item.id} className="task">
-              {item.id}
-              <br/>
-              {item.task}
-            </p>
-            <p>
-              <EditTask/>
-          <div> <a href="">Delete Task</a></div>
-          <p>Delete this task? <a href="" onClick={() => handleDelete(item.id)}>Yes.</a><a href="" onClick={ () => {}}>No.</a></p>
-            </p>
-             <br/>
-            </>
-          ))
-        ) : (
-          <p>No tasks yet</p>
-        )}
-      </div>
+      {loading && <p className="text-gray-600">Loading tasks...</p>}
+
+      {error && <p className="text-red-500">{error}</p>}
+
+      {!loading && !error && (
+        <>
+          <NewTask onNewTaskAdded={handleTaskAdded} />
+          <div>
+            {tasks.length > 0 ? (
+              tasks.map((item) => (
+                <div key={item.id}>
+                  <p className="task">
+                    {item.id}
+                    <br />
+                    {item.task}
+                  </p>
+
+                  {editingTask?.id === item.id ? (
+                    <EditTask
+                      task={editingTask}
+                      onSave={handleEditing}
+                      onCancel={() => setEditingTask(null)}
+                    />
+                  ) : (
+                    <>
+                      <button onClick={() => setEditingTask(item)}>
+                        Edit Task
+                      </button>
+                      <div>
+                        <button onClick={() => handleDelete(item.id)}>
+                          Delete Task
+                        </button>
+                      </div>
+                      <p>
+                        Delete this task?{" "}
+                        <button onClick={() => handleDelete(item.id)}>
+                          Yes
+                        </button>{" "}
+                        <button onClick={() => {}}>No</button>
+                      </p>
+                    </>
+                  )}
+                  <br />
+                </div>
+              ))
+            ) : (
+              <p>No tasks yet</p>
+            )}
+          </div>
+        </>
+      )}
     </section>
   );
 };
