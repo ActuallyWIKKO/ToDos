@@ -14,6 +14,21 @@
       "id": 3,
       "task": "a new task is born.",
       "completed": false
+    },
+    {
+      "id": 4,
+      "task": "another new task is here.",
+      "completed": false
+    },
+    {
+      "id": 5,
+      "task": "and another one.",
+      "completed": false
+    },
+    {
+      "id": 6,
+      "task": "and another one",
+      "completed": false
     }
   ]
 }

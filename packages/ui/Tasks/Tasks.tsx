@@ -25,9 +25,13 @@ export const Tasks: React.FC = () => {
     fetchTask();
   }, []);
 
+  const handleTaskAdded = (newTask: Task) => {
+    setTasks((prevTasks) => [newTask, ...prevTasks]);
+  }
+
   return (
     <section className="bg-base-100">
-      <NewTask />
+       <NewTask onNewTaskAdded={handleTaskAdded} />
       <div>
         {tasks.length > 0 ? (
           tasks.map((item) => (

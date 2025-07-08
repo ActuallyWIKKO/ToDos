@@ -7,7 +7,12 @@ type Task = {
   completed: boolean;
 };
 
-export const NewTask: React.FC = () => {
+type NewTaskProps = {
+  onNewTaskAdded: (task: Task) => void;
+}
+
+
+export const NewTask: React.FC<NewTaskProps> = ({onNewTaskAdded}) => {
   const [newTask, setNewTask] = useState<string>("");
 
   const createNewTask = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -20,6 +25,7 @@ export const NewTask: React.FC = () => {
         task: newTask,
       });
       setNewTask("");
+      onNewTaskAdded(response.data);
       // Insert some feedback for users here if the data send off was successful
     } catch (err) {
       console.log("Something went wrong while sending the data.");
