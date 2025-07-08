@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "../../../apps/frontend/node_modules/axios";
 import { NewTask } from "./NewTask";
+import { EditTask } from "./EditTask";
+import { DeleteTask } from "./DeleteTask";
 
 type Task = {
   id: number;
@@ -39,6 +41,8 @@ export const Tasks: React.FC = () => {
               {item.id}
               <br></br>
               {item.task}
+               <EditTask/>
+               <DeleteTask/>
             </p>
           ))
         ) : (
