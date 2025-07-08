@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "../../../apps/frontend/node_modules/axios";
 import { NewTask } from "./NewTask";
 import { EditTask } from "./EditTask";
-import { DeleteTask } from "./DeleteTask";
 
 type Task = {
   id: number;
@@ -22,6 +21,18 @@ export const Tasks: React.FC = () => {
       console.error(err);
     }
   };
+
+const handleDelete = async (id:number) => {
+    try {
+     await axios.delete(`http://localhost:1199/task/${id}`)
+     setTasks((previousTask) => previousTask.filter((tasks) => tasks.id !== id));   
+    } catch (err) {
+        console.log("Failed to delete the task.");
+        console.log("Here is why:");
+        console.error(err);
+    }
+}
+
 
   useEffect(() => {
     fetchTask();
@@ -44,7 +55,8 @@ export const Tasks: React.FC = () => {
             </p>
             <p>
               <EditTask/>
-               <DeleteTask/>
+          <div> <a href="">Delete Task</a></div>
+          <p>Delete this task? <a href="" onClick={() => handleDelete(item.id)}>Yes.</a><a href="" onClick={ () => {}}>No.</a></p>
             </p>
              <br/>
             </>
